@@ -17,7 +17,7 @@
   width: 420px;
   max-width: 420px;
   aspect-ratio: 1 / 1;
-  padding: 0px 0px;
+  padding: 0;
 
   background-image: url("https://leadsggnew.carrd.co/assets/images/image06.png?v=d666cdba");
   background-size: contain;
@@ -43,29 +43,42 @@
   justify-content: center;
 }
 
-/* BOTÓN PLAY (SIN CUADRADO) */
+/* BOTÓN PLAY INTERACTIVO */
 .play-btn {
   background: none;
   border: none;
   color: white;
   font-size: 21px;
   cursor: pointer;
+  padding: 0;
+
   outline: none;
   box-shadow: none;
-  padding: 0;
+
+  transition: 
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+.play-btn:hover {
+  transform: scale(1.18);
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+}
+
+.play-btn:active {
+  transform: scale(1.05);
 }
 
 .play-btn:focus,
-.play-btn:active,
 .play-btn:focus-visible {
   outline: none;
   box-shadow: none;
 }
 
-/* ELEMENTOS OCULTOS */
+/* OCULTOS */
 .album-cover,
 .song-info {
-  display:none;
+  display: none;
 }
 
 /* BARRA DE PROGRESO */
@@ -81,7 +94,7 @@
 .progress-bar {
   width: 47%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255,255,255,0.4);
   border-radius: 2px;
   position: absolute;
 }
@@ -152,7 +165,7 @@ playBtn.addEventListener("click", () => {
     audio.pause()
     playBtn.textContent = "▶"
   }
-  playBtn.blur() // ⬅️ quita foco (no aparece cuadrado)
+  playBtn.blur()
 })
 
 audio.addEventListener("timeupdate", () => {
