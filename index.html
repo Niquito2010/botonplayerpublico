@@ -5,11 +5,16 @@
 <title>Audio Player</title>
 
 <style>
+
+/* 🔑 CLAVE PARA CARRD IFRAME */
+html, body {
+  pointer-events: auto !important;
+}
+
+/* CONTENEDOR GENERAL */
 .player-container {
-  display: center;
-  justify-content: center;
-  align-items: center;
   width: 100%;
+  pointer-events: auto !important;
 }
 
 .player {
@@ -17,7 +22,6 @@
   width: 420px;
   max-width: 420px;
   aspect-ratio: 1 / 1;
-  padding: 0;
 
   background-image: url("https://leadsggnew.carrd.co/assets/images/image06.png?v=d666cdba");
   background-size: contain;
@@ -25,6 +29,7 @@
   background-position: center;
 
   font-family: Arial, sans-serif;
+  pointer-events: auto !important;
 }
 
 /* CONTROLES */
@@ -33,6 +38,7 @@
   top: 51%;
   left: 34%;
   transform: translate(-45%, -53%);
+  pointer-events: auto !important;
 }
 
 .play-wrapper {
@@ -41,44 +47,54 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto !important;
 }
 
-/* BOTÓN PLAY INTERACTIVO */
+/* BOTÓN PLAY / PAUSE */
 .play-btn {
   background: none;
   border: none;
   color: white;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   font-size: 21px;
+  line-height: 1;
+
   cursor: pointer;
   padding: 0;
 
   outline: none;
   box-shadow: none;
 
-  transition: 
+  pointer-events: auto !important;
+
+  transition:
     transform 0.25s ease,
     filter 0.25s ease;
 }
 
+/* HOVER (en Carrd puede o no dispararse) */
 .play-btn:hover {
   transform: scale(1.18);
   filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
 }
 
+/* ACTIVE (🔥 este SÍ funciona siempre, incluso si hover falla) */
 .play-btn:active {
-  transform: scale(1.05);
+  transform: scale(1.15);
 }
 
+/* SIN FOCO */
 .play-btn:focus,
 .play-btn:focus-visible {
   outline: none;
   box-shadow: none;
-}
-
-/* OCULTOS */
-.album-cover,
-.song-info {
-  display: none;
 }
 
 /* BARRA DE PROGRESO */
@@ -89,6 +105,7 @@
   right: 20px;
   height: 4px;
   cursor: pointer;
+  pointer-events: auto !important;
 }
 
 .progress-bar {
@@ -169,7 +186,7 @@ playBtn.addEventListener("click", () => {
 })
 
 audio.addEventListener("timeupdate", () => {
-  if (!isDragging) {
+  if (!isDragging && audio.duration) {
     const percent = (audio.currentTime / audio.duration) * 100
     progress.style.width = percent + "%"
     progressDot.style.left = percent + "%"
