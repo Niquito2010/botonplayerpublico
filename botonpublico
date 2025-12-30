@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Audio Player</title>
+
+<style>
+.player-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.player {
+  position: relative;
+  width: 430px;
+  max-width: 430px;
+  aspect-ratio: 1 / 1;
+  padding: 20px 15px;
+
+  background-image: url("https://leadsggnew.carrd.co/assets/images/image06.png?v=d666cdba");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  font-family: Arial, sans-serif;
+}
+
+/* CONTROLES */
+.controls {
+  position: absolute;
+  top: 51%;
+  left: 34%;
+  transform: translate(-45%, -53%);
+}
+
+.play-wrapper {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BOTÓN PLAY (SIN CUADRADO) */
+.play-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 21px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.play-btn:focus,
+.play-btn:active,
+.play-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ELEMENTOS OCULTOS */
+.album-cover,
+.song-info {
+  display: none;
+}
+
+/* BARRA DE PROGRESO */
+.progress-container {
+  position: absolute;
+  bottom: 215px;
+  left: 194px;
+  right: 20px;
+  height: 4px;
+  cursor: pointer;
+}
+
+.progress-bar {
+  width: 47%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  position: absolute;
+}
+
+.progress {
+  width: 0%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 2px;
+  position: absolute;
+}
+
+.progress-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
+.progress-container:hover .progress-dot {
+  display: block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="player-container">
+  <div class="player">
+
+    <div class="controls">
+      <div class="play-wrapper">
+        <button class="play-btn" id="playBtn">▶</button>
+      </div>
+    </div>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar"></div>
+      <div class="progress" id="progress"></div>
+      <div class="progress-dot" id="progressDot"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const audio = new Audio(
+  "https://image2url.com/r2/bucket2/audio/1766787831925-d173da5c-dd52-406f-bc1e-ad40958d4c84.mp3"
+)
+
+audio.volume = 1
+
+const playBtn = document.getElementById("playBtn")
+const progressContainer = document.getElementById("progressContainer")
+const progress = document.getElementById("progress")
+const progressDot = document.getElementById("progressDot")
+
+let isDragging = false
+
+playBtn.addEventListener("click", () => {
+  if (audio.paused) {
+    audio.play()
+    playBtn.textContent = "⏸"
+  } else {
+    audio.pause()
+    playBtn.textContent = "▶"
+  }
+  playBtn.blur() // ⬅️ quita foco (no aparece cuadrado)
+})
+
+audio.addEventListener("timeupdate", () => {
+  if (!isDragging) {
+    const percent = (audio.currentTime / audio.duration) * 100
+    progress.style.width = percent + "%"
+    progressDot.style.left = percent + "%"
+  }
+})
+
+progressContainer.addEventListener("mousedown", (e) => {
+  isDragging = true
+  updateFromEvent(e)
+})
+
+document.addEventListener("mousemove", (e) => {
+  if (isDragging) updateFromEvent(e)
+})
+
+document.addEventListener("mouseup", () => {
+  isDragging = false
+})
+
+function updateFromEvent(e) {
+  const rect = progressContainer.getBoundingClientRect()
+  let percent = ((e.clientX - rect.left) / rect.width) * 100
+  percent = Math.max(0, Math.min(100, percent))
+  progress.style.width = percent + "%"
+  progressDot.style.left = percent + "%"
+  audio.currentTime = (percent / 100) * audio.duration
+}
+</script>
+
+</body>
+</html>
