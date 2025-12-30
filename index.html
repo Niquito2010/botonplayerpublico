@@ -9,18 +9,23 @@
 /* 🔑 CLAVE PARA CARRD IFRAME */
 html, body {
   pointer-events: auto !important;
+  margin: 0;
+  padding: 0;
 }
 
 /* CONTENEDOR GENERAL */
 .player-container {
   width: 100%;
+  display: flex;
+  justify-content: center;
   pointer-events: auto !important;
 }
 
+/* PLAYER */
 .player {
   position: relative;
-  width: 420px;
-  max-width: 420px;
+
+  width: min(420px, 90vw);   /* 👈 responsive */
   aspect-ratio: 1 / 1;
 
   background-image: url("https://leadsggnew.carrd.co/assets/images/image06.png?v=d666cdba");
@@ -41,56 +46,47 @@ html, body {
   pointer-events: auto !important;
 }
 
+/* BOTÓN */
 .play-wrapper {
-  width: 90px;
-  height: 90px;
+  width: clamp(64px, 20vw, 90px);
+  height: clamp(64px, 20vw, 90px);
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: auto !important;
 }
 
-/* BOTÓN PLAY / PAUSE */
+/* PLAY / PAUSE */
 .play-btn {
   background: none;
   border: none;
   color: white;
 
-  width: 32px;
-  height: 32px;
+  width: clamp(26px, 8vw, 32px);
+  height: clamp(26px, 8vw, 32px);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 21px;
-  line-height: 1;
-
+  font-size: clamp(18px, 5vw, 21px);
   cursor: pointer;
   padding: 0;
 
   outline: none;
   box-shadow: none;
 
-  pointer-events: auto !important;
-
-  transition:
-    transform 0.25s ease,
-    filter 0.25s ease;
+  transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-/* HOVER (en Carrd puede o no dispararse) */
 .play-btn:hover {
   transform: scale(1.18);
   filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
 }
 
-/* ACTIVE (🔥 este SÍ funciona siempre, incluso si hover falla) */
 .play-btn:active {
   transform: scale(1.15);
 }
 
-/* SIN FOCO */
 .play-btn:focus,
 .play-btn:focus-visible {
   outline: none;
@@ -100,16 +96,18 @@ html, body {
 /* BARRA DE PROGRESO */
 .progress-container {
   position: absolute;
-  bottom: 194px;
-  left: 178px;
-  right: 20px;
+
+  bottom: 46%;
+  left: 42%;
+  width: 45%;
   height: 4px;
+
   cursor: pointer;
   pointer-events: auto !important;
 }
 
 .progress-bar {
-  width: 47%;
+  width: 100%;
   height: 100%;
   background-color: rgba(255,255,255,0.4);
   border-radius: 2px;
@@ -134,9 +132,20 @@ html, body {
   transform: translate(-50%, -50%);
 }
 
-.progress-container:hover .progress-dot {
-  display: block;
+/* 📱 AJUSTES EXTRA SOLO MÓVIL */
+@media (max-width: 480px) {
+  .controls {
+    top: 52%;
+    left: 36%;
+  }
+
+  .progress-container {
+    bottom: 44%;
+    left: 38%;
+    width: 52%;
+  }
 }
+
 </style>
 </head>
 
@@ -215,6 +224,10 @@ function updateFromEvent(e) {
   audio.currentTime = (percent / 100) * audio.duration
 }
 </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
