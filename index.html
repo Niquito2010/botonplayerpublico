@@ -17,7 +17,6 @@ html, body {
 .player-container {
   width: 100%;
   display: flex;
-  justify-content: center;
   pointer-events: auto !important;
 }
 
@@ -99,7 +98,7 @@ html, body {
 
   bottom: 46%;
   left: 42%;
-  width: 45%;
+  width: 26%;
   height: 4px;
 
   cursor: pointer;
@@ -133,7 +132,7 @@ html, body {
 }
 
 /* 📱 AJUSTES EXTRA SOLO MÓVIL */
-@media (max-width: 480px) {
+@media (max-width: 500px) {
   .controls {
     top: 52%;
     left: 36%;
@@ -224,10 +223,6 @@ function updateFromEvent(e) {
   audio.currentTime = (percent / 100) * audio.duration
 }
 </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
