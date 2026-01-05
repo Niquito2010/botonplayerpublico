@@ -5,36 +5,31 @@
 <title>Audio Player</title>
 
 <style>
-
-/* 🔑 CLAVE PARA CARRD IFRAME */
 html, body {
   pointer-events: auto !important;
   margin: 0;
   padding: 0;
 }
 
-/* CONTENEDOR GENERAL */
+/* CONTENEDOR */
 .player-container {
   width: 100%;
   display: flex;
-  justify-content: right;
-  pointer-events: auto !important;
+  justify-content: flex-end;
 }
 
 /* PLAYER */
 .player {
   position: relative;
-
-  width: min(420px, 100vw);   /* 👈 responsive */
+  width: min(420px, 100vw);
   aspect-ratio: 1 / 1;
 
-  background-image: url("https://leadsggnew.carrd.co/assets/images/image06.png?v=d666cdba");
+  background-image: url("https://leadsgg.com/assets/images/image06.png?v=54f968e8");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 
   font-family: Arial, sans-serif;
-  pointer-events: auto !important;
 }
 
 /* CONTROLES */
@@ -43,10 +38,8 @@ html, body {
   top: 51%;
   left: 34%;
   transform: translate(-45%, -53%);
-  pointer-events: auto !important;
 }
 
-/* BOTÓN */
 .play-wrapper {
   width: clamp(64px, 20vw, 90px);
   height: clamp(64px, 20vw, 90px);
@@ -55,26 +48,12 @@ html, body {
   justify-content: center;
 }
 
-/* PLAY / PAUSE */
 .play-btn {
   background: none;
   border: none;
   color: white;
-
-  width: clamp(26px, 8vw, 32px);
-  height: clamp(26px, 8vw, 32px);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: clamp(18px, 5vw, 21px);
   cursor: pointer;
-  padding: 0;
-
-  outline: none;
-  box-shadow: none;
-
+  font-size: clamp(18px, 5vw, 21px);
   transition: transform 0.25s ease, filter 0.25s ease;
 }
 
@@ -83,69 +62,40 @@ html, body {
   filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
 }
 
-.play-btn:active {
-  transform: scale(1.15);
-}
-
-.play-btn:focus,
-.play-btn:focus-visible {
-  outline: none;
-  box-shadow: none;
-}
-
-/* BARRA DE PROGRESO */
+/* BARRA */
 .progress-container {
   position: absolute;
-
   bottom: 46%;
   left: 42%;
   width: 26%;
-  height: 4px;
-
+  height: 6px;
   cursor: pointer;
-  pointer-events: auto !important;
 }
 
 .progress-bar {
   width: 100%;
   height: 100%;
-  background-color: rgba(255,255,255,0.4);
-  border-radius: 2px;
-  position: absolute;
+  background: rgba(255,255,255,0.4);
+  border-radius: 3px;
 }
 
 .progress {
   width: 0%;
   height: 100%;
-  background-color: #ffffff;
-  border-radius: 2px;
-  position: absolute;
+  background: #fff;
+  border-radius: 3px;
 }
 
 .progress-dot {
   width: 12px;
   height: 12px;
-  background-color: #fff;
+  background: #fff;
   border-radius: 50%;
   position: absolute;
   top: 50%;
+  left: 0%;
   transform: translate(-50%, -50%);
 }
-
-/* 📱 AJUSTES EXTRA SOLO MÓVIL */
-@media (max-width: 420px) {
-  .controls {
-    top: 51%;
-    left: 34%;
-  }
-
-  .progress-container {
-    bottom: 46%;
-    left: 42%;
-    width: 26%;
-  }
-}
-
 </style>
 </head>
 
@@ -170,62 +120,59 @@ html, body {
 </div>
 
 <script>
-const audio = new Audio(
-  "https://image2url.com/r2/default/audio/1767190818987-1d2c9a70-d410-43d5-b0eb-ffc05af3b6db.mp3"
-)
+const audio = new Audio("https://image2url.com/r2/default/audio/1767190818987-1d2c9a70-d410-43d5-b0eb-ffc05af3b6db.mp3");
+audio.preload = "metadata";
 
-audio.volume = 1
+const playBtn = document.getElementById("playBtn");
+const progressContainer = document.getElementById("progressContainer");
+const progress = document.getElementById("progress");
+const progressDot = document.getElementById("progressDot");
 
-const playBtn = document.getElementById("playBtn")
-const progressContainer = document.getElementById("progressContainer")
-const progress = document.getElementById("progress")
-const progressDot = document.getElementById("progressDot")
+let dragging = false;
 
-let isDragging = false
-
-playBtn.addEventListener("click", () => {
-  if (audio.paused) {
-    audio.play()
-    playBtn.textContent = "⏸"
-  } else {
-    audio.pause()
-    playBtn.textContent = "▶"
+playBtn.addEventListener("click", async () => {
+  try {
+    if (audio.paused) {
+      await audio.play();
+      playBtn.textContent = "⏸";
+    } else {
+      audio.pause();
+      playBtn.textContent = "▶";
+    }
+  } catch (e) {
+    console.warn("Audio bloqueado:", e);
   }
-  playBtn.blur()
-})
+});
 
 audio.addEventListener("timeupdate", () => {
-  if (!isDragging && audio.duration) {
-    const percent = (audio.currentTime / audio.duration) * 100
-    progress.style.width = percent + "%"
-    progressDot.style.left = percent + "%"
+  if (!dragging && audio.duration) {
+    const p = (audio.currentTime / audio.duration) * 100;
+    progress.style.width = p + "%";
+    progressDot.style.left = p + "%";
   }
-})
+});
 
-progressContainer.addEventListener("mousedown", (e) => {
-  isDragging = true
-  updateFromEvent(e)
-})
+progressContainer.addEventListener("pointerdown", e => {
+  dragging = true;
+  update(e);
+});
 
-document.addEventListener("mousemove", (e) => {
-  if (isDragging) updateFromEvent(e)
-})
+progressContainer.addEventListener("pointermove", e => {
+  if (dragging) update(e);
+});
 
-document.addEventListener("mouseup", () => {
-  isDragging = false
-})
+progressContainer.addEventListener("pointerup", () => dragging = false);
+progressContainer.addEventListener("pointerleave", () => dragging = false);
 
-function updateFromEvent(e) {
-  const rect = progressContainer.getBoundingClientRect()
-  let percent = ((e.clientX - rect.left) / rect.width) * 100
-  percent = Math.max(0, Math.min(100, percent))
-  progress.style.width = percent + "%"
-  progressDot.style.left = percent + "%"
-  audio.currentTime = (percent / 100) * audio.duration
+function update(e) {
+  const rect = progressContainer.getBoundingClientRect();
+  let p = ((e.clientX - rect.left) / rect.width) * 100;
+  p = Math.max(0, Math.min(100, p));
+  progress.style.width = p + "%";
+  progressDot.style.left = p + "%";
+  if (audio.duration) audio.currentTime = (p / 100) * audio.duration;
 }
 </script>
 
-</body>
-</html>
 </body>
 </html>
