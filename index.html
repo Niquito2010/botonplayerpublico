@@ -6,9 +6,9 @@
 
 <style>
 html, body {
-  pointer-events: auto !important;
   margin: 0;
   padding: 0;
+  pointer-events: auto !important;
 }
 
 /* CONTENEDOR */
@@ -62,7 +62,7 @@ html, body {
   filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
 }
 
-/* BARRA */
+/* BARRA DE PROGRESO */
 .progress-container {
   position: absolute;
   bottom: 46%;
@@ -72,7 +72,8 @@ html, body {
   cursor: pointer;
 }
 
-.progress-bar {
+.progress-track {
+  position: relative;
   width: 100%;
   height: 100%;
   background: rgba(255,255,255,0.4);
@@ -80,21 +81,39 @@ html, body {
 }
 
 .progress {
-  width: 0%;
+  position: absolute;
+  left: 0;
+  top: 0;
   height: 100%;
+  width: 0%;
   background: #fff;
   border-radius: 3px;
 }
 
 .progress-dot {
+  position: absolute;
+  top: 50%;
+  left: 0%;
   width: 12px;
   height: 12px;
   background: #fff;
   border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 0%;
   transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* 📱 MÓVIL */
+@media (max-width: 420px) {
+  .controls {
+    top: 51%;
+    left: 34%;
+  }
+
+  .progress-container {
+    bottom: 46%;
+    left: 42%;
+    width: 26%;
+  }
 }
 </style>
 </head>
@@ -111,16 +130,19 @@ html, body {
     </div>
 
     <div class="progress-container" id="progressContainer">
-      <div class="progress-bar"></div>
-      <div class="progress" id="progress"></div>
-      <div class="progress-dot" id="progressDot"></div>
+      <div class="progress-track">
+        <div class="progress" id="progress"></div>
+        <div class="progress-dot" id="progressDot"></div>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
-const audio = new Audio("https://image2url.com/r2/default/audio/1767190818987-1d2c9a70-d410-43d5-b0eb-ffc05af3b6db.mp3");
+const audio = new Audio(
+  "https://image2url.com/r2/default/audio/1767190818987-1d2c9a70-d410-43d5-b0eb-ffc05af3b6db.mp3"
+);
 audio.preload = "metadata";
 
 const playBtn = document.getElementById("playBtn");
@@ -139,38 +161,42 @@ playBtn.addEventListener("click", async () => {
       audio.pause();
       playBtn.textContent = "▶";
     }
-  } catch (e) {
-    console.warn("Audio bloqueado:", e);
+  } catch (err) {
+    console.warn("Audio bloqueado por el navegador:", err);
   }
 });
 
 audio.addEventListener("timeupdate", () => {
   if (!dragging && audio.duration) {
-    const p = (audio.currentTime / audio.duration) * 100;
-    progress.style.width = p + "%";
-    progressDot.style.left = p + "%";
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progress.style.width = percent + "%";
+    progressDot.style.left = percent + "%";
   }
 });
 
 progressContainer.addEventListener("pointerdown", e => {
   dragging = true;
-  update(e);
+  updateFromEvent(e);
 });
 
 progressContainer.addEventListener("pointermove", e => {
-  if (dragging) update(e);
+  if (dragging) updateFromEvent(e);
 });
 
 progressContainer.addEventListener("pointerup", () => dragging = false);
 progressContainer.addEventListener("pointerleave", () => dragging = false);
 
-function update(e) {
+function updateFromEvent(e) {
   const rect = progressContainer.getBoundingClientRect();
-  let p = ((e.clientX - rect.left) / rect.width) * 100;
-  p = Math.max(0, Math.min(100, p));
-  progress.style.width = p + "%";
-  progressDot.style.left = p + "%";
-  if (audio.duration) audio.currentTime = (p / 100) * audio.duration;
+  let percent = ((e.clientX - rect.left) / rect.width) * 100;
+  percent = Math.max(0, Math.min(100, percent));
+
+  progress.style.width = percent + "%";
+  progressDot.style.left = percent + "%";
+
+  if (audio.duration) {
+    audio.currentTime = (percent / 100) * audio.duration;
+  }
 }
 </script>
 
